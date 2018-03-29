@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/slockit/ewf-coo-matcher.git"
+    "url": "git+https://github.com/energywebfoundation/ewf_coo_matcher"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/slockit/ewf-coo-matcher/issues"
+    "url": "https://github.com/energywebfoundation/ewf_coo_matcher/issues"
   },
-  "homepage": "https://github.com/slockit/ewf-coo-matcher#readme",
+  "homepage": "https://github.com/energywebfoundation/ewf_coo_matcher/ewf-coo-matcher#readme",
   "dependencies": {
-    "ewf-coo": "git+https://github.com/slockit/ewf-coo.git",
+    "ewf-coo": "git+https://github.com/energywebfoundation/certificate_of_origin",
     "typescript": "^2.7.1",
     "web3": "^1.0.0-beta.30"
   },
