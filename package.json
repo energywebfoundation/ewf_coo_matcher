@@ -1,0 +1,30 @@
+{
+  "name": "ewf-coo-matcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/matcher-main.js",
+    "debug": "node --inspect build/matcher-main.js",
+    "build": "rm -rf build/ && node_modules/typescript/bin/tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slockit/ewf-coo-matcher.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/slockit/ewf-coo-matcher/issues"
+  },
+  "homepage": "https://github.com/slockit/ewf-coo-matcher#readme",
+  "dependencies": {
+    "ewf-coo": "git+https://github.com/slockit/ewf-coo.git",
+    "typescript": "^2.7.1",
+    "web3": "^1.0.0-beta.30"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.5"
+  }
+}
