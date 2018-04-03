@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/energywebfoundation/ewf_coo_matcher/ewf-coo-matcher#readme",
   "dependencies": {
-    "ewf-coo": "git+https://github.com/energywebfoundation/certificate_of_origin",
+    "ewf-coo": "github:energywebfoundation/ewf-coo",
     "typescript": "^2.7.1",
     "web3": "^1.0.0-beta.30"
   },
