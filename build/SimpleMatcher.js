@@ -45,7 +45,7 @@ class SimpleMatcher extends Matcher_1.Matcher {
             const sortedDemandList = this.buildDemandList(demands, asset.id);
             let i = 0;
             while (wh > 0 && i < sortedDemandList.length) {
-                const whFit = yield this.tryToFitAssetAndDemand(wh, asset, sortedDemandList[i]);
+                const whFit = yield this.tryToFitAssetAndDemand(wh, asset, sortedDemandList[i], null);
                 if (whFit > 0) {
                     wh -= yield this.sendMatchTx(sortedDemandList[i], asset.id, whFit);
                 }
@@ -63,7 +63,7 @@ class SimpleMatcher extends Matcher_1.Matcher {
             const sortedCertificates = certificatesHoldInTrust.sort((a, b) => b.powerInW - a.powerInW);
             for (let i = 0; i < sortedCertificates.length; i++) {
                 const certificate = sortedCertificates[i];
-                const wh = yield this.tryToFitAssetAndDemand(certificate.powerInW, yield this.matchingManager.getProducingAsset(certificate.assetId), demand);
+                const wh = yield this.tryToFitAssetAndDemand(certificate.powerInW, yield this.matchingManager.getProducingAsset(certificate.assetId), demand, certificate);
                 if (wh === certificate.powerInW) {
                     console.log('> Certificate ' + certificate.id + ' fits and provides ' + certificate.powerInW + ' from demanded ' + demand.targetWhPerPeriod + ' Wh');
                     yield demand.matchCertificate(certificate.id);
@@ -118,11 +118,18 @@ class SimpleMatcher extends Matcher_1.Matcher {
             }
         });
     }
-    tryToFitAssetAndDemand(wh, asset, demand) {
+    tryToFitAssetAndDemand(wh, asset, demand, certificate) {
         return __awaiter(this, void 0, void 0, function* () {
             const blockTimestamp = (yield this.blockchainProperties.web3.eth.getBlock('latest')).timestamp;
+            yield asset.syncWithBlockchain();
             if (demand.endTime <= blockTimestamp || demand.startTime > blockTimestamp) {
                 this.matchingManager.removeDemand(demand.id);
+                return 0;
+            }
+            if (!certificate && ((demand.getBitFromDemandMask(5) && demand.minCO2Offset > (asset.getCoSaved(wh) / wh) * 100))) {
+                return 0;
+            }
+            else if (certificate && ((demand.getBitFromDemandMask(5) && demand.minCO2Offset > (certificate.coSaved / certificate.powerInW) * 100))) {
                 return 0;
             }
             if ((demand.getBitFromDemandMask(4) && demand.locationRegion !== asset.region)
@@ -131,8 +138,16 @@ class SimpleMatcher extends Matcher_1.Matcher {
                 || demand.matcher !== this.blockchainProperties.matcherAccount
                 || (demand.getBitFromDemandMask(2) && demand.registryCompliance !== asset.complianceRegistry)
                 || (demand.getBitFromDemandMask(0) && demand.originator !== asset.owner)
-                || (demand.getBitFromDemandMask(6) && demand.productingAsset !== asset.id)
-                || (demand.getBitFromDemandMask(5) && ((asset.getCoSaved(wh) * 1000) / wh) / 10)) {
+                || (demand.getBitFromDemandMask(6) && demand.productingAsset !== asset.id)) {
+                // console.log(demand.getBitFromDemandMask(4) && demand.locationRegion !== asset.region)
+                // console.log(demand.getBitFromDemandMask(1) && demand.assettype !== asset.assetType)
+                // console.log(demand.getBitFromDemandMask(3) && demand.locationCountry !== asset.country)
+                // console.log(demand.matcher !== this.blockchainProperties.matcherAccount)
+                // console.log(demand.getBitFromDemandMask(2) && demand.registryCompliance !== asset.complianceRegistry)
+                // console.log(demand.getBitFromDemandMask(0) && demand.originator !== asset.owner)
+                // console.log(demand.getBitFromDemandMask(6) && demand.productingAsset !== asset.id)
+                // console.log(demand.getBitFromDemandMask(5) && demand.minCO2Offset < ((asset.getCoSaved(wh) * 1000) / wh)/10)
+                // console.log(demand.minCO2Offset + ' > ' + ((asset.getCoSaved(wh) * 1000) / wh)/10)
                 return 0;
             }
             let consumedWh = Infinity;

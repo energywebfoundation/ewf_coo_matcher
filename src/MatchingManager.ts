@@ -62,7 +62,7 @@ export class MatchingManager {
     }
 
     async registerProducingAsset(newAsset: ProducingAsset) {
-        const existingAsset = this.producingAssets.find((asset: Asset) => newAsset.id === asset.id)
+        const existingAsset = this.producingAssets.find((asset: Asset) => newAsset.id == asset.id)
 
         if (existingAsset) {
             await existingAsset.syncWithBlockchain()
@@ -73,7 +73,7 @@ export class MatchingManager {
     }
 
     async registerConsumingAsset(newAsset: ConsumingAsset) {
-        const existingAsset = this.consumingAssets.find((asset: Asset) => newAsset.id === asset.id)
+        const existingAsset = this.consumingAssets.find((asset: Asset) => newAsset.id == asset.id)
 
         if (existingAsset) {
             await existingAsset.syncWithBlockchain()
@@ -84,7 +84,7 @@ export class MatchingManager {
     }
 
     async registerDemand(newDemand: Demand) {
-        const existingDemand = this.demands.find((demand: Demand) => newDemand.id === demand.id)
+        const existingDemand = this.demands.find((demand: Demand) => newDemand.id == demand.id)
 
         if (existingDemand) {
             await existingDemand.syncWithBlockchain()
@@ -96,7 +96,7 @@ export class MatchingManager {
     }
 
     async registerCertificate(newCertificate: Certificate) {
-        const existingCertificate = this.certificatesHoldInTrust.find((certificate: Certificate) => newCertificate.id === certificate.id)
+        const existingCertificate = this.certificatesHoldInTrust.find((certificate: Certificate) => newCertificate.id == certificate.id)
 
         if (existingCertificate) {
             await existingCertificate.syncWithBlockchain()
@@ -107,7 +107,7 @@ export class MatchingManager {
     }
 
     async removeProducingAsset(assetId: number) {
-        const assetIndex = this.producingAssets.findIndex((asset: Asset) => assetId === asset.id)
+        const assetIndex = this.producingAssets.findIndex((asset: Asset) => assetId == asset.id)
 
         if(assetIndex !== -1) {
             this.producingAssets.splice(assetIndex, 1)
@@ -116,7 +116,7 @@ export class MatchingManager {
     }
 
     async removeConsumingAsset(assetId: number) {
-        const assetIndex = this.consumingAssets.findIndex((asset: Asset) => assetId === asset.id)
+        const assetIndex = this.consumingAssets.findIndex((asset: Asset) => assetId == asset.id)
 
         if(assetIndex !== -1) {
             this.consumingAssets.splice(assetIndex, 1)
@@ -125,29 +125,35 @@ export class MatchingManager {
     }
 
     async removeDemand(demandId: number) {
-        const demandIndex = this.demands.findIndex((demand: Demand) => demandId === demand.id)
+        const demandIndex = this.demands.findIndex((demand: Demand) => demandId == demand.id)
 
         if(demandIndex !== -1) {
       
             this.demands.splice(demandIndex, 1)
-          
             console.log('*> removed demand: ' + demandId)
         }
     }
 
     async removeCertificate(certificateId: number) {
-        const certificateIndex = this.certificatesHoldInTrust.findIndex((certificate: Certificate) => certificateId === certificate.id)
+        
+        const certificateIndex = this.certificatesHoldInTrust.findIndex((certificate: Certificate) => certificateId == certificate.id)
+        console.log('*> initiated removal of certificate ' + certificateId + ' at index ' + certificateIndex)
+        const printCerts = () => {
+            this.certificatesHoldInTrust.forEach((c: Certificate) => {
+                console.log('***> cert: ' + c.id)
+            })
+        }
 
-        if(certificateId !== -1) {
-      
+        if(certificateIndex !== -1) {
+         
             this.certificatesHoldInTrust.splice(certificateIndex, 1)
-          
-            console.log('*> removed certificate hold in trus: ' + certificateId)
+            console.log('*> removed certificate hold in trust: ' + certificateId)
+  
         }
     }
 
     async getProducingAsset(assetId: number): Promise<ProducingAsset> {
-        let asset = this.producingAssets.find((asset: ProducingAsset) => asset.id === assetId)
+        let asset = this.producingAssets.find((asset: ProducingAsset) => asset.id == assetId)
         if (!asset) {
             asset = await (new ProducingAsset(assetId, this.blockchainProperties)).syncWithBlockchain()
         }
@@ -155,7 +161,7 @@ export class MatchingManager {
     }
 
     async getConsumingAsset(assetId: number): Promise<ConsumingAsset> {
-        let asset = this.consumingAssets.find((asset: ConsumingAsset) => asset.id === assetId)
+        let asset = this.consumingAssets.find((asset: ConsumingAsset) => asset.id == assetId)
         if (!asset) {
             asset = await (new ConsumingAsset(assetId, this.blockchainProperties)).syncWithBlockchain()
         }
@@ -163,7 +169,7 @@ export class MatchingManager {
     }
 
     async createOrRefreshConsumingAsset(assetId: number): Promise<ConsumingAsset>{
-        let assetIndex = this.consumingAssets.findIndex((asset: ConsumingAsset) => asset.id === assetId)
+        let assetIndex = this.consumingAssets.findIndex((asset: ConsumingAsset) => asset.id == assetId)
         if (assetIndex !== -1) {
 
             this.consumingAssets[assetId] = await this.consumingAssets[assetId].syncWithBlockchain()
@@ -177,6 +183,6 @@ export class MatchingManager {
     }
     
     getDemand(demandId: number): Demand {
-        return this.demands.find((demand: Demand) => demand.id === demandId)
+        return this.demands.find((demand: Demand) => demand.id == demandId)
     }
 }

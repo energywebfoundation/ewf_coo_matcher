@@ -11,5 +11,5 @@ export declare class SimpleMatcher extends Matcher {
     private buildDemandList(demands, assetId);
     private sendMatchTx(demand, assetId, whFit);
     private creatAssetOwnerCertificate(wh, assetId);
-    private tryToFitAssetAndDemand(wh, asset, demand);
+    private tryToFitAssetAndDemand(wh, asset, demand, certificate);
 }

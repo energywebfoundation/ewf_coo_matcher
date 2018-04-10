@@ -45,7 +45,7 @@ const initEventHandling = (matchingManager, blockchainProperties, matcherAddress
     certificateContractEventHandler.onEvent('LogCertificateOwnerChanged', (event) => __awaiter(this, void 0, void 0, function* () {
         if (matcherAddress === event.returnValues._oldEscrow && matcherAddress !== event.returnValues._newEscrow) {
             console.log('\n* Event: LogCertificateOwnerChanged certificate escrow changed certificate id: ' + event.returnValues._certificateId);
-            matchingManager.removeCertificate(event.returnValues._certificateId);
+            matchingManager.removeCertificate(parseInt(event.returnValues._certificateId, 10));
         }
     }));
     const demandContractEventHandler = new ewf_coo_1.ContractEventHandler(blockchainProperties.demandLogicInstance, currentBlockNumber);
@@ -57,7 +57,7 @@ const initEventHandling = (matchingManager, blockchainProperties, matcherAddress
     }));
     demandContractEventHandler.onEvent('LogDemandExpired', (event) => __awaiter(this, void 0, void 0, function* () {
         console.log('\n* Event: LogDemandExpired demand: ' + event.returnValues._demandId);
-        matchingManager.removeDemand(event.returnValues._demandId);
+        matchingManager.removeDemand(parseInt(event.returnValues._demandId, 10));
     }));
     const assetContractEventHandler = new ewf_coo_1.ContractEventHandler(blockchainProperties.producingAssetLogicInstance, currentBlockNumber);
     assetContractEventHandler.onEvent('LogNewMeterRead', (event) => matchingManager.match(event.returnValues._assetId, event.returnValues._newMeterRead - event.returnValues._oldMeterRead));
@@ -73,7 +73,7 @@ const initEventHandling = (matchingManager, blockchainProperties, matcherAddress
     }));
     assetContractEventHandler.onEvent('LogAssetSetInactive', (event) => __awaiter(this, void 0, void 0, function* () {
         console.log('\n* Event: LogAssetSetInactive asset: ' + event.returnValues._assetId);
-        matchingManager.removeProducingAsset(event.returnValues._assetId);
+        matchingManager.removeProducingAsset(parseInt(event.returnValues._assetId, 10));
     }));
     const consumingAssetContractEventHandler = new ewf_coo_1.ContractEventHandler(blockchainProperties.consumingAssetLogicInstance, currentBlockNumber);
     consumingAssetContractEventHandler.onEvent('LogNewMeterRead', (event) => __awaiter(this, void 0, void 0, function* () {
@@ -93,7 +93,7 @@ const initEventHandling = (matchingManager, blockchainProperties, matcherAddress
     }));
     consumingAssetContractEventHandler.onEvent('LogAssetSetInactive', (event) => __awaiter(this, void 0, void 0, function* () {
         console.log('\n* Event: LogAssetSetInactive consuming asset: ' + event.returnValues._assetId);
-        matchingManager.removeConsumingAsset(event.returnValues._assetId);
+        matchingManager.removeConsumingAsset(parseInt(event.returnValues._assetId, 10));
     }));
     const eventHandlerManager = new ewf_coo_1.EventHandlerManager(4000, blockchainProperties);
     eventHandlerManager.registerEventHandler(consumingAssetContractEventHandler);

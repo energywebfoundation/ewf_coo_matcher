@@ -4,27 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register src/test/*.ts",
     "start": "node build/matcher-main.js",
     "debug": "node --inspect build/matcher-main.js",
     "build": "rm -rf build/ && node_modules/typescript/bin/tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/energywebfoundation/ewf_coo_matcher"
+    "url": "git+https://github.com/slockit/ewf-coo-matcher.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/energywebfoundation/ewf_coo_matcher/issues"
+    "url": "https://github.com/slockit/ewf-coo-matcher/issues"
   },
-  "homepage": "https://github.com/energywebfoundation/ewf_coo_matcher/ewf-coo-matcher#readme",
+  "homepage": "https://github.com/slockit/ewf-coo-matcher#readme",
   "dependencies": {
     "ewf-coo": "github:energywebfoundation/ewf-coo",
     "typescript": "^2.7.1",
     "web3": "^1.0.0-beta.30"
   },
   "devDependencies": {
-    "@types/node": "^9.4.5"
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^5.0.0",
+    "@types/node": "^9.4.5",
+    "chai": "^4.1.2",
+    "mocha": "^5.0.5",
+    "ts-node": "^5.0.1"
   }
 }

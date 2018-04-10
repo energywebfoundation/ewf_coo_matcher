@@ -49,7 +49,7 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
         if (matcherAddress === event.returnValues._oldEscrow && matcherAddress !== event.returnValues._newEscrow) {
             console.log('\n* Event: LogCertificateOwnerChanged certificate escrow changed certificate id: ' + event.returnValues._certificateId)
             
-            matchingManager.removeCertificate(event.returnValues._certificateId)
+            matchingManager.removeCertificate(parseInt(event.returnValues._certificateId, 10))
         }
        
     })
@@ -66,7 +66,7 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
 
     demandContractEventHandler.onEvent('LogDemandExpired', async (event) => {
         console.log('\n* Event: LogDemandExpired demand: ' + event.returnValues._demandId)
-        matchingManager.removeDemand(event.returnValues._demandId)
+        matchingManager.removeDemand(parseInt(event.returnValues._demandId,10))
 
     })
 
@@ -93,7 +93,7 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
     assetContractEventHandler.onEvent('LogAssetSetInactive' , async (event) => {
         console.log('\n* Event: LogAssetSetInactive asset: ' + event.returnValues._assetId)
 
-        matchingManager.removeProducingAsset(event.returnValues._assetId)
+        matchingManager.removeProducingAsset(parseInt(event.returnValues._assetId,10))
         
     })
 
@@ -124,7 +124,7 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
     consumingAssetContractEventHandler.onEvent('LogAssetSetInactive' , async (event) => {
         console.log('\n* Event: LogAssetSetInactive consuming asset: ' + event.returnValues._assetId)
 
-        matchingManager.removeConsumingAsset(event.returnValues._assetId)
+        matchingManager.removeConsumingAsset(parseInt(event.returnValues._assetId, 10))
         
     })
     

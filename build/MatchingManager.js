@@ -57,7 +57,7 @@ class MatchingManager {
     }
     registerProducingAsset(newAsset) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingAsset = this.producingAssets.find((asset) => newAsset.id === asset.id);
+            const existingAsset = this.producingAssets.find((asset) => newAsset.id == asset.id);
             if (existingAsset) {
                 yield existingAsset.syncWithBlockchain();
             }
@@ -69,7 +69,7 @@ class MatchingManager {
     }
     registerConsumingAsset(newAsset) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingAsset = this.consumingAssets.find((asset) => newAsset.id === asset.id);
+            const existingAsset = this.consumingAssets.find((asset) => newAsset.id == asset.id);
             if (existingAsset) {
                 yield existingAsset.syncWithBlockchain();
             }
@@ -81,7 +81,7 @@ class MatchingManager {
     }
     registerDemand(newDemand) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingDemand = this.demands.find((demand) => newDemand.id === demand.id);
+            const existingDemand = this.demands.find((demand) => newDemand.id == demand.id);
             if (existingDemand) {
                 yield existingDemand.syncWithBlockchain();
             }
@@ -93,7 +93,7 @@ class MatchingManager {
     }
     registerCertificate(newCertificate) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingCertificate = this.certificatesHoldInTrust.find((certificate) => newCertificate.id === certificate.id);
+            const existingCertificate = this.certificatesHoldInTrust.find((certificate) => newCertificate.id == certificate.id);
             if (existingCertificate) {
                 yield existingCertificate.syncWithBlockchain();
             }
@@ -105,7 +105,7 @@ class MatchingManager {
     }
     removeProducingAsset(assetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const assetIndex = this.producingAssets.findIndex((asset) => assetId === asset.id);
+            const assetIndex = this.producingAssets.findIndex((asset) => assetId == asset.id);
             if (assetIndex !== -1) {
                 this.producingAssets.splice(assetIndex, 1);
                 console.log('*> removed producing asset: ' + assetId);
@@ -114,7 +114,7 @@ class MatchingManager {
     }
     removeConsumingAsset(assetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const assetIndex = this.consumingAssets.findIndex((asset) => assetId === asset.id);
+            const assetIndex = this.consumingAssets.findIndex((asset) => assetId == asset.id);
             if (assetIndex !== -1) {
                 this.consumingAssets.splice(assetIndex, 1);
                 console.log('*> removed consuming asset: ' + assetId);
@@ -123,7 +123,7 @@ class MatchingManager {
     }
     removeDemand(demandId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const demandIndex = this.demands.findIndex((demand) => demandId === demand.id);
+            const demandIndex = this.demands.findIndex((demand) => demandId == demand.id);
             if (demandIndex !== -1) {
                 this.demands.splice(demandIndex, 1);
                 console.log('*> removed demand: ' + demandId);
@@ -132,16 +132,22 @@ class MatchingManager {
     }
     removeCertificate(certificateId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const certificateIndex = this.certificatesHoldInTrust.findIndex((certificate) => certificateId === certificate.id);
-            if (certificateId !== -1) {
+            const certificateIndex = this.certificatesHoldInTrust.findIndex((certificate) => certificateId == certificate.id);
+            console.log('*> initiated removal of certificate ' + certificateId + ' at index ' + certificateIndex);
+            const printCerts = () => {
+                this.certificatesHoldInTrust.forEach((c) => {
+                    console.log('***> cert: ' + c.id);
+                });
+            };
+            if (certificateIndex !== -1) {
                 this.certificatesHoldInTrust.splice(certificateIndex, 1);
-                console.log('*> removed certificate hold in trus: ' + certificateId);
+                console.log('*> removed certificate hold in trust: ' + certificateId);
             }
         });
     }
     getProducingAsset(assetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let asset = this.producingAssets.find((asset) => asset.id === assetId);
+            let asset = this.producingAssets.find((asset) => asset.id == assetId);
             if (!asset) {
                 asset = yield (new ewf_coo_1.ProducingAsset(assetId, this.blockchainProperties)).syncWithBlockchain();
             }
@@ -150,7 +156,7 @@ class MatchingManager {
     }
     getConsumingAsset(assetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let asset = this.consumingAssets.find((asset) => asset.id === assetId);
+            let asset = this.consumingAssets.find((asset) => asset.id == assetId);
             if (!asset) {
                 asset = yield (new ewf_coo_1.ConsumingAsset(assetId, this.blockchainProperties)).syncWithBlockchain();
             }
@@ -159,7 +165,7 @@ class MatchingManager {
     }
     createOrRefreshConsumingAsset(assetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let assetIndex = this.consumingAssets.findIndex((asset) => asset.id === assetId);
+            let assetIndex = this.consumingAssets.findIndex((asset) => asset.id == assetId);
             if (assetIndex !== -1) {
                 this.consumingAssets[assetId] = yield this.consumingAssets[assetId].syncWithBlockchain();
                 return this.consumingAssets[assetId];
@@ -172,7 +178,7 @@ class MatchingManager {
         });
     }
     getDemand(demandId) {
-        return this.demands.find((demand) => demand.id === demandId);
+        return this.demands.find((demand) => demand.id == demandId);
     }
 }
 exports.MatchingManager = MatchingManager;
