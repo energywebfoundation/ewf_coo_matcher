@@ -165,7 +165,7 @@ describe('Test Matcher', () => __awaiter(this, void 0, void 0, function* () {
         const web3 = new Web3('http://localhost:8545');
         topAdminAccount = yield web3.eth.accounts.wallet.add(test_accounts_1.PrivateKeys[0]);
         const wallet = yield web3.eth.accounts.wallet.add(test_accounts_1.PrivateKeys[8]);
-        const cooContractInstance = new web3.eth.Contract(ewf_coo_1.CoOTruffleBuild.abi, "0x3251af4228147ae39e60619f9e021d09bcd10fcc");
+        const cooContractInstance = new web3.eth.Contract(ewf_coo_1.CoOTruffleBuild.abi, "0x359c2c4a9cb9dffe672b0979fbeaa717a1ddf118");
         const assetProducingRegistryAddress = yield cooContractInstance.methods.assetProducingRegistry().call();
         const demandLogicAddress = yield cooContractInstance.methods.demandRegistry().call();
         const certificateLogicAddress = yield cooContractInstance.methods.certificateRegistry().call();
@@ -184,75 +184,87 @@ describe('Test Matcher', () => __awaiter(this, void 0, void 0, function* () {
         chai_1.expect(generatedProducingAssets.length).to.equal(9);
         chai_1.expect(generatedConsumingAssets.length).to.equal(3);
     })).timeout(7500);
-    for (let i = 0; i < 256; i++) {
-        it('should create new demand #' + i, () => __awaiter(this, void 0, void 0, function* () {
-            let matchingPossible = true;
-            let createdDemand = yield initDemands(topAdminAccount.address, blockchainProperties);
-            if (!createdDemand)
-                return true;
-            const asset = generatedProducingAssets.find((a) => a.id === createdDemand.productingAsset);
-            for (let j = 0; j < 8; j++) {
-                console.log(namedProps[j] + ' ' + createdDemand.getBitFromDemandMask(j));
-            }
-            if (createdDemand.getBitFromDemandMask(6)) {
-                if (createdDemand.getBitFromDemandMask(0)) {
-                    if (createdDemand.originator !== asset.owner) {
-                        console.log("should not have matched because of originator");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("owner fits");
-                    }
-                }
-                if (createdDemand.getBitFromDemandMask(1)) {
-                    if (createdDemand.assettype !== asset.assetType) {
-                        console.log("should not have matched because of assetType");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("assetType fits");
-                    }
-                }
-                if (createdDemand.getBitFromDemandMask(2)) {
-                    if (createdDemand.registryCompliance !== asset.compliance) {
-                        console.log("should not have matched because of compliance");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("compliance fits");
-                    }
-                }
-                if (createdDemand.getBitFromDemandMask(3)) {
-                    if (createdDemand.locationCountry !== asset.country) {
-                        console.log("should not have matched because of country");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("country fits");
-                    }
-                }
-                if (createdDemand.getBitFromDemandMask(4)) {
-                    if (createdDemand.locationRegion !== asset.region) {
-                        console.log("should not have matched because of region");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("region fits");
-                    }
-                }
-                if (createdDemand.getBitFromDemandMask(5)) {
-                    if (createdDemand.minCO2Offset !== asset.minCO2Offset) {
-                        console.log("should not have matched because of minCO2Offset");
-                        matchingPossible = false;
-                    }
-                    else {
-                        console.log("minCO2Offset fits");
-                    }
-                }
-            }
-            if (matchingPossible)
-                console.log("should have matched");
-        })).timeout(5000);
-    }
+    /*   for (let i = 0; i < 256; i++) {
+           it('should create new demand #' + i, async () => {
+   
+               let matchingPossible = true
+               let createdDemand: Demand = await initDemands(topAdminAccount.address, blockchainProperties)
+               if (!createdDemand) return true
+   
+               const asset = generatedProducingAssets.find((a: ProducingAsset) => a.id === createdDemand.productingAsset)
+   
+               for (let j = 0; j < 8; j++) {
+                   console.log(namedProps[j] + ' ' + createdDemand.getBitFromDemandMask(j))
+               }
+   
+               if (createdDemand.getBitFromDemandMask(6)) {
+   
+                   if (createdDemand.getBitFromDemandMask(0)) {
+                       if (createdDemand.originator !== asset.owner) {
+                           console.log("should not have matched because of originator")
+                           matchingPossible = false
+                       }
+                       else {
+                           console.log("owner fits")
+                       }
+                   }
+   
+                   if (createdDemand.getBitFromDemandMask(1)) {
+                       if (createdDemand.assettype !== asset.assetType) {
+                           console.log("should not have matched because of assetType")
+                           matchingPossible = false
+   
+                       }
+                       else {
+                           console.log("assetType fits")
+                       }
+                   }
+                   if (createdDemand.getBitFromDemandMask(2)) {
+                       if (createdDemand.registryCompliance !== asset.compliance) {
+                           console.log("should not have matched because of compliance")
+                           matchingPossible = false
+   
+                       }
+                       else {
+                           console.log("compliance fits")
+                       }
+                   }
+                   if (createdDemand.getBitFromDemandMask(3)) {
+                       if (createdDemand.locationCountry !== asset.country) {
+                           console.log("should not have matched because of country")
+                           matchingPossible = false
+   
+                       }
+                       else {
+                           console.log("country fits")
+                       }
+                   }
+                   if (createdDemand.getBitFromDemandMask(4)) {
+                       if (createdDemand.locationRegion !== asset.region) {
+                           console.log("should not have matched because of region")
+                           matchingPossible = false
+   
+                       }
+                       else {
+                           console.log("region fits")
+                       }
+                   }
+                   if (createdDemand.getBitFromDemandMask(5)) {
+                       if (createdDemand.minCO2Offset !== asset.minCO2Offset) {
+                           console.log("should not have matched because of minCO2Offset")
+                           matchingPossible = false
+   
+                       }
+                       else {
+                           console.log("minCO2Offset fits")
+                       }
+                   }
+               }
+               if (matchingPossible) console.log("should have matched")
+   
+   
+           }).timeout(5000);
+
+}   */
 }));
 //# sourceMappingURL=matcherTest.js.map

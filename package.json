@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/slockit/ewf-coo-matcher#readme",
   "dependencies": {
-    "ewf-coo": "github:energywebfoundation/ewf-coo",
+    "ewf-coo": "git+https://github.com/slockit/ewf-coo.git",
     "typescript": "^2.7.1",
     "web3": "^1.0.0-beta.30"
   },

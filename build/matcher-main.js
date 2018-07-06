@@ -26,7 +26,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ewf_coo_1 = require("ewf-coo");
 const MatchingManager_1 = require("./MatchingManager");
 const SimpleMatcher_1 = require("./SimpleMatcher");
-const test_accounts_1 = require("./test-accounts");
 const Web3 = require('web3');
 const getInstanceFromTruffleBuild = (truffleBuild, web3) => {
     const address = Object.keys(truffleBuild.networks).length > 0 ? truffleBuild.networks[Object.keys(truffleBuild.networks)[0]].address : null;
@@ -60,7 +59,7 @@ const initEventHandling = (matchingManager, blockchainProperties, matcherAddress
         matchingManager.removeDemand(parseInt(event.returnValues._demandId, 10));
     }));
     const assetContractEventHandler = new ewf_coo_1.ContractEventHandler(blockchainProperties.producingAssetLogicInstance, currentBlockNumber);
-    assetContractEventHandler.onEvent('LogNewMeterRead', (event) => matchingManager.match(event.returnValues._assetId, event.returnValues._newMeterRead - event.returnValues._oldMeterRead));
+    assetContractEventHandler.onEvent('LogNewMeterRead', (event) => matchingManager.match(event.returnValues._assetId, parseInt(event.returnValues._newMeterRead, 10) - parseInt(event.returnValues._oldMeterRead, 10)));
     assetContractEventHandler.onEvent('LogAssetFullyInitialized', (event) => __awaiter(this, void 0, void 0, function* () {
         console.log('\n* Event: LogAssetFullyInitialized asset: ' + event.returnValues._assetId);
         const newAsset = yield new ewf_coo_1.ProducingAsset(event.returnValues._assetId, blockchainProperties).syncWithBlockchain();
@@ -121,8 +120,9 @@ const initMatchingManager = (blockchainProperties, escrowAddress) => __awaiter(t
 });
 const main = () => __awaiter(this, void 0, void 0, function* () {
     const cooAddress = process.argv[2];
+    const privateKeyMatcher = process.argv[3];
     const web3 = new Web3('http://localhost:8545');
-    const wallet = yield web3.eth.accounts.wallet.add(test_accounts_1.PrivateKeys[8]);
+    const wallet = yield web3.eth.accounts.wallet.add(privateKeyMatcher);
     console.log('* Machter address: ' + wallet.address);
     console.log('* CoO contract address: ' + cooAddress);
     const cooContractInstance = new web3.eth.Contract(ewf_coo_1.CoOTruffleBuild.abi, cooAddress);

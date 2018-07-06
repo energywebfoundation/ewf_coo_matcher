@@ -34,24 +34,24 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
     const currentBlockNumber = await blockchainProperties.web3.eth.getBlockNumber()
 
     const certificateContractEventHandler = new ContractEventHandler(blockchainProperties.certificateLogicInstance, currentBlockNumber)
-    certificateContractEventHandler.onEvent('LogCreatedCertificate' , async (event) => {
-        
+    certificateContractEventHandler.onEvent('LogCreatedCertificate', async (event) => {
+
         if (matcherAddress === event.returnValues.escrow) {
             console.log('\n* Event: LogCreatedCertificate certificate hold in trust id: ' + event.returnValues._certificateId)
             const newCertificate = await new Certificate(event.returnValues._certificateId, blockchainProperties).syncWithBlockchain()
-            matchingManager.registerCertificate(newCertificate)   
+            matchingManager.registerCertificate(newCertificate)
         }
-       
+
     })
 
-    certificateContractEventHandler.onEvent('LogCertificateOwnerChanged' , async (event) => {
-        
+    certificateContractEventHandler.onEvent('LogCertificateOwnerChanged', async (event) => {
+
         if (matcherAddress === event.returnValues._oldEscrow && matcherAddress !== event.returnValues._newEscrow) {
             console.log('\n* Event: LogCertificateOwnerChanged certificate escrow changed certificate id: ' + event.returnValues._certificateId)
-            
+
             matchingManager.removeCertificate(parseInt(event.returnValues._certificateId, 10))
         }
-       
+
     })
 
     const demandContractEventHandler = new ContractEventHandler(blockchainProperties.demandLogicInstance, currentBlockNumber)
@@ -66,14 +66,14 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
 
     demandContractEventHandler.onEvent('LogDemandExpired', async (event) => {
         console.log('\n* Event: LogDemandExpired demand: ' + event.returnValues._demandId)
-        matchingManager.removeDemand(parseInt(event.returnValues._demandId,10))
+        matchingManager.removeDemand(parseInt(event.returnValues._demandId, 10))
 
     })
 
     const assetContractEventHandler = new ContractEventHandler(blockchainProperties.producingAssetLogicInstance, currentBlockNumber)
 
-    assetContractEventHandler.onEvent('LogNewMeterRead', (event) => 
-        matchingManager.match(event.returnValues._assetId, event.returnValues._newMeterRead - event.returnValues._oldMeterRead))
+    assetContractEventHandler.onEvent('LogNewMeterRead', (event) =>
+        matchingManager.match(event.returnValues._assetId, parseInt(event.returnValues._newMeterRead, 10) - parseInt(event.returnValues._oldMeterRead, 10)))
 
     assetContractEventHandler.onEvent('LogAssetFullyInitialized', async (event) => {
         console.log('\n* Event: LogAssetFullyInitialized asset: ' + event.returnValues._assetId)
@@ -82,19 +82,19 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
 
     })
 
-    assetContractEventHandler.onEvent('LogAssetSetActive' , async (event) => {
+    assetContractEventHandler.onEvent('LogAssetSetActive', async (event) => {
         console.log('\n* Event: LogAssetSetActive  asset: ' + event.returnValues._assetId)
-   
+
         const asset = await (new ProducingAsset(event.returnValues._assetId, blockchainProperties)).syncWithBlockchain()
         matchingManager.registerProducingAsset(asset)
 
     })
 
-    assetContractEventHandler.onEvent('LogAssetSetInactive' , async (event) => {
+    assetContractEventHandler.onEvent('LogAssetSetInactive', async (event) => {
         console.log('\n* Event: LogAssetSetInactive asset: ' + event.returnValues._assetId)
 
-        matchingManager.removeProducingAsset(parseInt(event.returnValues._assetId,10))
-        
+        matchingManager.removeProducingAsset(parseInt(event.returnValues._assetId, 10))
+
     })
 
     const consumingAssetContractEventHandler = new ContractEventHandler(blockchainProperties.consumingAssetLogicInstance, currentBlockNumber)
@@ -102,32 +102,32 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
     consumingAssetContractEventHandler.onEvent('LogNewMeterRead', async (event) => {
         console.log('\n* Event: LogNewMeterRead consuming asset: ' + event.returnValues._assetId);
         const asset = await matchingManager.createOrRefreshConsumingAsset(event.returnValues._assetId)
-        console.log('*> Meter read: '  + asset.lastSmartMeterReadWh + ' Wh')
+        console.log('*> Meter read: ' + asset.lastSmartMeterReadWh + ' Wh')
 
     })
 
     consumingAssetContractEventHandler.onEvent('LogAssetFullyInitialized', async (event) => {
         console.log('\n* Event: LogAssetFullyInitialized consuming asset: ' + event.returnValues._assetId)
-        const newAsset = await new ConsumingAsset(event.returnValues._assetId , blockchainProperties).syncWithBlockchain()
+        const newAsset = await new ConsumingAsset(event.returnValues._assetId, blockchainProperties).syncWithBlockchain()
         matchingManager.registerConsumingAsset(newAsset)
 
     })
 
-    consumingAssetContractEventHandler.onEvent('LogAssetSetActive' , async (event) => {
+    consumingAssetContractEventHandler.onEvent('LogAssetSetActive', async (event) => {
         console.log('\n* Event: LogAssetSetActive consuming asset: ' + event.returnValues._assetId)
-   
+
         const asset = await (new ConsumingAsset(event.returnValues._assetId, blockchainProperties)).syncWithBlockchain()
         matchingManager.registerConsumingAsset(asset)
 
     })
 
-    consumingAssetContractEventHandler.onEvent('LogAssetSetInactive' , async (event) => {
+    consumingAssetContractEventHandler.onEvent('LogAssetSetInactive', async (event) => {
         console.log('\n* Event: LogAssetSetInactive consuming asset: ' + event.returnValues._assetId)
 
         matchingManager.removeConsumingAsset(parseInt(event.returnValues._assetId, 10))
-        
+
     })
-    
+
     const eventHandlerManager = new EventHandlerManager(4000, blockchainProperties)
     eventHandlerManager.registerEventHandler(consumingAssetContractEventHandler)
     eventHandlerManager.registerEventHandler(demandContractEventHandler)
@@ -139,7 +139,7 @@ const initEventHandling = async (matchingManager: MatchingManager, blockchainPro
 const initMatchingManager = async (blockchainProperties: BlockchainProperties, escrowAddress: string) => {
     const matchingManager = new MatchingManager(blockchainProperties)
     matchingManager.setMatcher(new SimpleMatcher(blockchainProperties, matchingManager))
-    
+
     console.log('\n* Getting all porducing assets')
     const assetList = (await ProducingAsset.GET_ALL_ASSETS(blockchainProperties))
     assetList.forEach(async (asset: Asset) => matchingManager.registerProducingAsset(asset as ProducingAsset))
@@ -147,7 +147,7 @@ const initMatchingManager = async (blockchainProperties: BlockchainProperties, e
     console.log('\n* Getting all consuming assets')
     const consumingAssetList = (await ConsumingAsset.GET_ALL_ASSETS(blockchainProperties))
     consumingAssetList.forEach(async (asset: Asset) => matchingManager.registerConsumingAsset(asset as ConsumingAsset))
-    
+
     console.log('\n* Getting all active demands')
     const demandList = await Demand.GET_ALL_ACTIVE_DEMANDS(blockchainProperties)
     demandList.forEach(async (demand: Demand) => matchingManager.registerDemand(demand))
@@ -155,21 +155,23 @@ const initMatchingManager = async (blockchainProperties: BlockchainProperties, e
     console.log('\n* Getting all certificates hold in trust')
     const certificateList = await Certificate.GET_ALL_CERTIFICATES_WITH_ESCROW(escrowAddress, blockchainProperties)
     certificateList.forEach(async (certificate: Certificate) => matchingManager.registerCertificate(certificate))
-    
+
     return matchingManager
 }
 
 const main = async () => {
     const cooAddress = process.argv[2]
 
+    const privateKeyMatcher = process.argv[3]
+
     const web3 = new Web3('http://localhost:8545')
-    const wallet = await web3.eth.accounts.wallet.add(PrivateKeys[8])
-    
+    const wallet = await web3.eth.accounts.wallet.add(privateKeyMatcher)
+
     console.log('* Machter address: ' + wallet.address)
     console.log('* CoO contract address: ' + cooAddress)
 
 
- 
+
 
 
     const cooContractInstance = new web3.eth.Contract((CoOTruffleBuild as any).abi, cooAddress)
